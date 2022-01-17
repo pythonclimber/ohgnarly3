@@ -12,6 +12,7 @@ services:
       # port forwarding
       # localhost port : internal container port (in this case the port that mongo runs on in the container)
       - 27017:27017
+    platform: linux/x86_64
     # Container env variables
     environment:
       MONGO_INITDB_ROOT_USERNAME: root

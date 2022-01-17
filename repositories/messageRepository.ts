@@ -3,7 +3,7 @@ import {Message, MessageDocument, MessageModel} from '../models/message';
 
 export class MessageRepository {
     getRecentMessagesByPage = async (millisAgo: number, page: number) => {
-    return await MessageModel.find({createdAt: {$gt: new Date(Date.now() - millisAgo)}})
+        return await MessageModel.find({createdAt: {$gt: new Date(Date.now() - millisAgo)}})
             .sort("-createdAt")
             .skip(page * 25)
             .limit(25)

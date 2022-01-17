@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import {Message} from '../models/message';
+import {Message, MessageDocument} from '../models/message';
 import {MessageRepository} from '../repositories/messageRepository';
 import {stringifyParam, sortMessages} from '../services/utilities';
 
@@ -41,17 +41,17 @@ export class MessageController {
                 res.send({error: 'Must provide search value'});
             }
 
-            let searchFn: Function;
+            let messages: MessageDocument[];
             if (req.body.searchDate) {
                 const startDate = new Date(req.body.searchDate);
                 const endDate = new Date(req.body.searchDate);
                 endDate.setDate(endDate.getDate() + 1);
-                searchFn = this.messageRepository.searchByDate.bind(startDate, endDate);
+                console.log(`Debug: ${startDate} - ${endDate}`)
+                messages = await this.messageRepository.searchByDate(startDate, endDate);
             } else {
-                searchFn = this.messageRepository.searchByText.bind(req.body.searchText);
+                messages = await this.messageRepository.searchByText(req.body.searchText);
             }
 
-            const messages = await searchFn();
             res.send(sortMessages(messages));
         } catch (err) {
             res.send(err);

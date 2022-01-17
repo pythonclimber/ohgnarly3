@@ -10,9 +10,7 @@ import Debug from 'debug'
 import {Server, Socket} from 'socket.io'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import {Authorization} from './services/authorization';
-import {AllowedOrigins} from './services/allowedOrigins';
-import {Settings} from './services/settings'
+import {getConnectionStrings, getAllowedOrigins, allowedOrigins, authorizationService} from './services'
 import {Routes} from './routes';
 import {MessageController} from "./controllers/messageController";
 
@@ -20,15 +18,12 @@ dotenv.config();
 
 const logger = morgan;
 const debug = Debug('ohgnarly:server');
-const authorization = new Authorization();
-const origin = new AllowedOrigins();
-
 
 /**
  * Initialize mongodb connection
  */
 mongoose.Promise = global.Promise;
-const connectionString = Settings.connectionStrings()['ohgnarly'];
+const connectionString = getConnectionStrings()['ohgnarly'];
 mongoose.connect(connectionString, {useNewUrlParser: true, useUnifiedTopology: true});
 
 /**
@@ -46,7 +41,7 @@ const appServer = app.listen(port, onListening);
  */
 const io = new Server(appServer, {
     cors: {
-        origin: Settings.allowedOrigins(),
+        origin: getAllowedOrigins(),
         methods: ['GET', 'POST'],
         credentials: false
     },
@@ -59,12 +54,12 @@ io.on('connection', onSocketConnect);
 
 //const authUrlRegExp = new RegExp(`\/((?!${settings.authExclusionUrls.join('|')})np.)*`);
 
-app.use(cors(origin));
+app.use(cors(allowedOrigins));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(authorization.validateApiCall);
+app.use(authorizationService.validateApiCall);
 const router = express.Router();
 app.use('/', new Routes(io).configureRoutes(router));
 
