@@ -19,7 +19,8 @@ export class UserRepository {
     }
 
     getAllUsers = async () => {
-        return await userModel.find().exec() as UserDocument[];
+        const users = await userModel.find().exec() as UserDocument[];
+        return users;
     }
 
     getUserByEmailAddress = async (emailAddress: string) => {

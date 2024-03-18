@@ -14,9 +14,10 @@ export class LoginController {
 
     login = async (req: Request, res: Response) => {
         try {
-            const username = req.body.userName.toLowerCase();
+            let {username, password} = req.body;
+            username = username.toLowerCase();
             const user = await this.userRepository.getUserByUserName(username);
-            const result = await bcrypt.compare(req.body.password, user.password);
+            const result = await bcrypt.compare(password, user.password);
 
             if (result) {
                 return res.send({userId: user._id, success: true});
@@ -31,9 +32,10 @@ export class LoginController {
 
     chatLogin = async (req: Request, res: Response) => {
         try {
-            const username = req.body.userName.toLowerCase();
-            const user = await this.userRepository.getChatUser(username);
-            const isSame = await bcrypt.compare(req.body.password, user.password);
+            let {userName, password} = req.body;
+            userName = userName.toLowerCase();
+            const user = await this.userRepository.getUserByUserName(userName);
+            const isSame = await bcrypt.compare(password, user.password);
 
             if (isSame) {
                 res.send({userId: user._id, success: true, socketUrl: Settings.socketUrl()});
