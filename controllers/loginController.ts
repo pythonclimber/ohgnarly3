@@ -14,9 +14,9 @@ export class LoginController {
 
     login = async (req: Request, res: Response) => {
         try {
-            let {username, password} = req.body;
-            username = username.toLowerCase();
-            const user = await this.userRepository.getUserByUserName(username);
+            let {userName, password} = req.body;
+            userName = userName.toLowerCase();
+            const user = await this.userRepository.getUserByUserName(userName);
             const result = await bcrypt.compare(password, user.password);
 
             if (result) {
