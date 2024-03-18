@@ -85,10 +85,10 @@ export class MovieController {
             res.send({success: false, error: err});
         }
     };
-    
+
     getMovie = async (req: Request, res: Response) => {
         try {
-            const movie = await this.movieRepository.get(req.body.userId, req.body.imdbid);
+            const movie = await this.movieRepository.get(req.params.userId, req.params.imdbid);
             return res.send(movie);
         } catch (err) {
             return res.send(err);
