@@ -34,7 +34,7 @@ export class LoginController {
         try {
             let {userName, password} = req.body;
             userName = userName.toLowerCase();
-            const user = await this.userRepository.getUserByUserName(userName);
+            const user = await this.userRepository.getChatUser(userName);
             const isSame = await bcrypt.compare(password, user.password);
 
             if (isSame) {

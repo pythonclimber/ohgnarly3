@@ -54,6 +54,7 @@ export class Routes {
         router.put('/movie', this.movieController.updateMovie);
         router.delete('/person/:personId', this.personController.deletePerson)
         router.delete('/movie/:userId/:imdbid', this.movieController.deleteMovie);
+        router.get('/update-movies', this.movieController.updateMovies);
         return router;
     }
 }

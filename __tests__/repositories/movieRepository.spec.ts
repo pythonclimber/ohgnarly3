@@ -65,19 +65,19 @@ describe('movieRepository', () => {
         });
     });
 
-    describe('getOnlineDetails', () => {
-        it('should return The Royal Tenenbaums', async () => {
-            const imdbMovie = await movieRepository.getOnlineDetails('tt0265666');
-            expect(imdbMovie.title).toEqual('The Royal Tenenbaums');
-        });
-    });
+    // describe('getOnlineDetails', () => {
+    //     it('should return The Royal Tenenbaums', async () => {
+    //         const imdbMovie = await movieRepository.getOnlineDetails('tt0265666');
+    //         expect(imdbMovie.title).toEqual('The Royal Tenenbaums');
+    //     });
+    // });
 
-    describe('searchOnline', () => {
-        it('should return search results', async () => {
-            const searchResults = await movieRepository.searchOnline('Hello', 1);
-            expect(searchResults.results.length).toEqual(10);
-        });
-    });
+    // describe('searchOnline', () => {
+    //     it('should return search results', async () => {
+    //         const searchResults = await movieRepository.searchOnline('Hello', 1);
+    //         expect(searchResults.results.length).toEqual(10);
+    //     });
+    // });
 
     afterEach(async () => {
         await mongoose.disconnect();

@@ -3,6 +3,7 @@ import {MovieController} from '../../controllers/movieController';
 import {Movie, MovieDocument} from '../../models/movie';
 import {Request, Response} from 'express';
 import {SearchResults} from 'imdb-api';
+import {expect} from "@jest/globals";
 
 describe('MovieController', () => {
     let movieRepository: MovieRepository;
@@ -182,18 +183,28 @@ describe('MovieController', () => {
 
     describe('getMovie', () => {
         it('should return a movie', async () => {
-            req.body = {userId: '123', imdbid: '345'}
+            req.params = {userId: '123', imdbid: '345'}
             const movie = {} as MovieDocument;
 
             movieRepository.get = jest.fn().mockResolvedValue(movie);
 
             await movieController.getMovie(req, res);
 
-            expect(res.send).toHaveBeenCalledWith(movie);
+            expect(res.send).toHaveBeenCalledWith({movie: movie, found: true});
+        });
+
+        it('should return found == false if movie not found', async () => {
+            req.params = {userId: '123', imdbid: 'not-valid'}
+
+            movieRepository.get = jest.fn().mockResolvedValue(null);
+
+            await movieController.getMovie(req, res);
+
+            expect(res.send).toHaveBeenCalledWith({movie: null, found: false});
         });
 
         it('should raise error if lookup fails', async () => {
-            req.body = {userId: '', imdbid: ''};
+            req.params = {userId: '', imdbid: ''};
             const error = new Error('lookup failed');
 
             movieRepository.get = jest.fn().mockRejectedValue(error);

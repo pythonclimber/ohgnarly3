@@ -12,13 +12,30 @@ export class MovieController {
 
     getMovies = async (req: Request, res: Response) => {
         try {
-            const movies = await this.movieRepository.getMoviesForUser(req.params.userId);
+            const {userId} = req.params;
+            const movies = await this.movieRepository.getMoviesForUser(userId);
             res.send(movies);
         } catch (err) {
             res.send(err);
         }
     };
-    
+
+    updateMovies = async(req: Request, res: Response) => {
+        const userId = '5d9ce112b3608e16726bc0ea';
+        const movies = await this.movieRepository.getMoviesForUser(userId);
+
+        for (let movie of movies) {
+            if (!movie.imdbid) {
+                console.log(movie.title);
+                const searchResults = await this.movieRepository.searchOnline(movie.title, 1);
+                movie.imdbid = searchResults.results[0].imdbid
+                await this.movieRepository.update(movie.userId, undefined, movie);
+            }
+        }
+
+        res.send();
+    }
+
     createMovie = async (req: Request, res: Response) => {
         try {
             const movie = await this.movieRepository.add(req.body);
@@ -27,7 +44,7 @@ export class MovieController {
             return res.send(err);
         }
     };
-    
+
     getMovieDetails = async (req: Request, res: Response) => {
         const onlineId = req.params.onlineId;
         if (!onlineId) {
@@ -37,11 +54,11 @@ export class MovieController {
         try {
             const movie = await this.movieRepository.getOnlineDetails(onlineId);
             res.send(movie);
-        } catch(err) {
+        } catch (err) {
             res.send(err);
         }
     };
-    
+
     searchMovies = async (req: Request, res: Response) => {
         const title = req.params.title;
         const page = parseInt(req.params.page) || 1;
@@ -56,7 +73,7 @@ export class MovieController {
             return res.send(err);
         }
     };
-    
+
     deleteMovie = async (req: Request, res: Response) => {
         try {
             const result = await this.movieRepository.delete(req.params.userId, req.params.imdbid);
@@ -65,7 +82,7 @@ export class MovieController {
             return res.send({success: false, error: err});
         }
     };
-    
+
     getFormats = async (req: Request, res: Response) => {
         const results = [];
 
@@ -76,7 +93,7 @@ export class MovieController {
 
         res.send(results);
     };
-    
+
     updateMovie = async (req: Request, res: Response) => {
         try {
             const updated = await this.movieRepository.update(req.body.userId, req.body.imdbid, req.body.update);
@@ -89,7 +106,8 @@ export class MovieController {
     getMovie = async (req: Request, res: Response) => {
         try {
             const movie = await this.movieRepository.get(req.params.userId, req.params.imdbid);
-            return res.send(movie);
+            const response = {movie: movie, found: !!movie};
+            return res.send(response);
         } catch (err) {
             return res.send(err);
         }

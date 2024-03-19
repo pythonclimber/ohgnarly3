@@ -6,13 +6,12 @@ services:
   mongo:
     # dockerhub container image
     # if we omit the version it will pull down the latest image
-    image: "mongo:3.6.7"
+    image: "mongo"
     restart: always
     ports:
       # port forwarding
       # localhost port : internal container port (in this case the port that mongo runs on in the container)
       - 27017:27017
-    platform: linux/x86_64
     # Container env variables
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
